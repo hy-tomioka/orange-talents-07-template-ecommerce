@@ -14,7 +14,7 @@ public class User {
     private Long id;
 
     @NotBlank @Email
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String login;
 
     @NotBlank @Size(min = 6)
