@@ -23,7 +23,7 @@ public class ValidationExceptionHandler {
     }
 
     @ResponseStatus(BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler
     public List<ValidationErrorResponse> handleValidationError(MethodArgumentNotValidException exception) {
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
         return buildErrorForm(fieldErrors);
