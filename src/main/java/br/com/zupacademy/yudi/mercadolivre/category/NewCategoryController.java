@@ -23,8 +23,8 @@ public class NewCategoryController {
     @PostMapping
     @Transactional
     public ResponseEntity<NewCategoryResponse> create(@RequestBody @Valid NewCategoryRequest request) {
-        Category category = request.toCategory(em);
-        em.persist(category);
-        return ResponseEntity.ok(new NewCategoryResponse(category));
+        Category newCategory = request.toCategory(em);
+        em.persist(newCategory);
+        return ResponseEntity.ok(new NewCategoryResponse(newCategory));
     }
 }
