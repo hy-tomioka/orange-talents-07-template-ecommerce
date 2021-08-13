@@ -18,17 +18,15 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @EnableWebSecurity
 @Configuration
-@Profile(value = {"prod"})
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+@Profile(value = {"dev"})
+public class DevSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationService authenticationService;
-    private final TokenService tokenService;
     private final UserRepository userRepository;
 
-    public SecurityConfiguration(AuthenticationService authenticationService, TokenService tokenService,
-                                 UserRepository userRepository) {
+    public DevSecurityConfiguration(AuthenticationService authenticationService,
+                                    UserRepository userRepository) {
         this.authenticationService = authenticationService;
-        this.tokenService = tokenService;
         this.userRepository = userRepository;
     }
 
@@ -46,13 +44,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers(POST, "/api/user").permitAll()
-                .antMatchers(POST, "/api/auth").permitAll()
-                .anyRequest().authenticated()
-                .and().csrf().disable()
-                .sessionManagement().sessionCreationPolicy(STATELESS)
-                .and().addFilterBefore(new TokenAuthenticationFilter(tokenService, userRepository),
-                UsernamePasswordAuthenticationFilter.class);
+                .antMatchers("/**").permitAll()
+                .and().csrf().disable();
     }
 
     @Override

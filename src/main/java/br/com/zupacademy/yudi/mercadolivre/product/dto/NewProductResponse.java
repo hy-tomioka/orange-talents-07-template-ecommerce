@@ -13,7 +13,7 @@ public class NewProductResponse {
     private Long id;
     private String name;
     private String description;
-    private BigDecimal value;
+    private BigDecimal price;
     private Long quantity;
     private String categoryName;
     private List<NewCharacteristicResponse> characteristics = new ArrayList<>();
@@ -23,7 +23,7 @@ public class NewProductResponse {
         this.id = product.getId();
         this.name = product.getName();
         this.description = product.getDescription();
-        this.value = product.getValue();
+        this.price = product.getPrice();
         this.quantity = product.getQuantity();
         this.categoryName = product.getCategoryName();
         this.characteristics.addAll(product.getCharacteristics().stream().map(NewCharacteristicResponse::new)
@@ -42,8 +42,8 @@ public class NewProductResponse {
         return description;
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public Long getQuantity() {

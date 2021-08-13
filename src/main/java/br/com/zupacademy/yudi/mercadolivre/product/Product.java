@@ -3,16 +3,18 @@ package br.com.zupacademy.yudi.mercadolivre.product;
 import br.com.zupacademy.yudi.mercadolivre.category.Category;
 import br.com.zupacademy.yudi.mercadolivre.product.dto.NewCharacteristicRequest;
 import br.com.zupacademy.yudi.mercadolivre.user.User;
+import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
 
 @Entity
 @Table(name = "products")
@@ -27,7 +29,7 @@ public class Product {
 
     @NotNull
     @Column(nullable = false)
-    private BigDecimal value;
+    private BigDecimal price;
 
     @NotNull
     @Column(nullable = false)
@@ -41,8 +43,11 @@ public class Product {
     @JoinColumn(nullable = false)
     private Category category;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = PERSIST)
     private Set<Characteristic> characteristics = new HashSet<>();
+
+    @OneToMany(mappedBy = "product", cascade = MERGE)
+    private Set<ProductImage> images = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -55,10 +60,10 @@ public class Product {
     private Product() {
     }
 
-    public Product(String name, BigDecimal value, Long quantity, String description, Category category,
+    public Product(String name, BigDecimal price, Long quantity, String description, Category category,
                    Collection<NewCharacteristicRequest> characteristics, User user) {
         this.name = name;
-        this.value = value;
+        this.price = price;
         this.quantity = quantity;
         this.description = description;
         this.category = category;
@@ -75,8 +80,8 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public Long getQuantity() {
@@ -93,5 +98,24 @@ public class Product {
 
     public Set<Characteristic> getCharacteristics() {
         return Collections.unmodifiableSet(characteristics);
+    }
+
+    public String getUserLogin() {
+        return user.getUsername();
+    }
+
+    public void uploadAndBindImages(ImageUploader imageUploader, List<MultipartFile> images) {
+        Set<String> imagesLocation = imageUploader.upload(images);
+        bindImages(imagesLocation);
+    }
+
+    private void bindImages(Set<String> location) {
+        Assert.notEmpty(location, "Images are required.");
+        this.images.addAll(location.stream().map(image -> new ProductImage(image, this))
+                .collect(Collectors.toSet()));
+    }
+
+    public boolean belongsTo(User user) {
+        return (user.equals(this.user));
     }
 }

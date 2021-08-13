@@ -8,10 +8,7 @@ import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
@@ -21,8 +18,8 @@ public class NewProductRequest {
 
     @NotBlank
     private String name;
-    @NotNull @Positive
-    private BigDecimal value;
+    @NotNull @DecimalMin("0.01")
+    private BigDecimal price;
     @NotNull @Positive
     private Long quantity;
     @Size(max = 1000)
@@ -38,8 +35,8 @@ public class NewProductRequest {
         return name;
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public Long getQuantity() {
@@ -63,7 +60,7 @@ public class NewProductRequest {
         Category category = em.find(Category.class, categoryId);
         User user = em.find(User.class, userId);
         arePresent(category, user);
-        return new Product(name, value, quantity, description, category, characteristics, user);
+        return new Product(name, price, quantity, description, category, characteristics, user);
     }
 
     private void arePresent(Category category, User user) {
@@ -71,6 +68,10 @@ public class NewProductRequest {
         Assert.isTrue(user != null, "User not found.");
     }
 
+    /**
+     * used by spring validator
+     * @return
+     */
     public boolean hasIdenticalCharacteristicsNames() {
         Set<String> characs = new HashSet<>();
         for (NewCharacteristicRequest characteristic : characteristics) {
