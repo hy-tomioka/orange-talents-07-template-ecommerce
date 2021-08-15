@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/categories")
 public class NewCategoryController {
 
     @PersistenceContext

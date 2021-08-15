@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 public class NewProductController {
 
     @PersistenceContext

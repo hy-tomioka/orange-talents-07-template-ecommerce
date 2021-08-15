@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 public class ProductImageController {
 
     private final ImageUploader imageUploader;
@@ -21,7 +21,7 @@ public class ProductImageController {
         this.productRepository = productRepository;
     }
 
-    @PostMapping(value = "/{id}/image")
+    @PostMapping(value = "/{id}/images")
     public void upload(@Valid ProductImageRequest request, @PathVariable(name = "id") Long id,
                        @AuthenticationPrincipal User user) {
 
