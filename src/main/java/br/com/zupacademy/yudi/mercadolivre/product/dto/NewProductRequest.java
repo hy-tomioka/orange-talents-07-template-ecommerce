@@ -31,24 +31,14 @@ public class NewProductRequest {
     @Valid
     private List<NewCharacteristicRequest> characteristics;
 
-    public String getName() {
-        return name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public Long getQuantity() {
-        return quantity;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
+    public NewProductRequest(String name, BigDecimal price, Long quantity, String description, Long categoryId,
+                             List<NewCharacteristicRequest> characteristics) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.description = description;
+        this.categoryId = categoryId;
+        this.characteristics = characteristics;
     }
 
     public List<NewCharacteristicRequest> getCharacteristics() {

@@ -17,16 +17,10 @@ public class ProductOpinionRequest {
     @NotBlank @Size(max = 500)
     private String review;
 
-    public Integer getRating() {
-        return rating;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getReview() {
-        return review;
+    public ProductOpinionRequest(Integer rating, String title, String review) {
+        this.rating = rating;
+        this.title = title;
+        this.review = review;
     }
 
     public ProductOpinion toProductOpinion(Product product, User user) {

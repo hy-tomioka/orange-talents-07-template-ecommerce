@@ -50,8 +50,8 @@ public class Product {
     private Set<ProductImage> images = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "seller_id", nullable = false)
+    private User seller;
 
     /**
      * Only for Hibernate use
@@ -61,7 +61,7 @@ public class Product {
     }
 
     public Product(String name, BigDecimal price, Long quantity, String description, Category category,
-                   Collection<NewCharacteristicRequest> characteristics, User user) {
+                   Collection<NewCharacteristicRequest> characteristics, User seller) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -69,7 +69,7 @@ public class Product {
         this.category = category;
         this.characteristics.addAll(characteristics.stream().map(c -> c.toCharacteristic(this))
                 .collect(Collectors.toSet()));
-        this.user = user;
+        this.seller = seller;
     }
 
     public Long getId() {
@@ -100,8 +100,8 @@ public class Product {
         return Collections.unmodifiableSet(characteristics);
     }
 
-    public String getUserLogin() {
-        return user.getUsername();
+    public String getSellerLogin() {
+        return seller.getUsername();
     }
 
     public void uploadAndBindImages(ImageUploader imageUploader, List<MultipartFile> images) {
@@ -116,6 +116,13 @@ public class Product {
     }
 
     public boolean belongsTo(User user) {
-        return (user.equals(this.user));
+        return (user.equals(this.seller));
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

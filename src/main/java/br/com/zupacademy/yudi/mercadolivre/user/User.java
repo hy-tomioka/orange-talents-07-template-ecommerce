@@ -29,8 +29,8 @@ public class User implements UserDetails {
 
     @CreationTimestamp
     @PastOrPresent
-    @Column(nullable = false)
-    private LocalDateTime dataCadastro;
+    @Column(name = "registry_date", nullable = false)
+    private LocalDateTime registryDate;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
@@ -97,5 +97,13 @@ public class User implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hash(login);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                '}';
     }
 }
