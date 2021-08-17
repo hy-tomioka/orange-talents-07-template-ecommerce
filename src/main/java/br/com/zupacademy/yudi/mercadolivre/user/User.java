@@ -32,9 +32,6 @@ public class User implements UserDetails {
     @Column(name = "registry_date", nullable = false)
     private LocalDateTime registryDate;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Role> roles = new ArrayList<>();
-
     /**
      * Only for Hibernate use
      */
@@ -53,7 +50,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
+        return null;
     }
 
     @Override
@@ -97,13 +94,5 @@ public class User implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hash(login);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
-                '}';
     }
 }

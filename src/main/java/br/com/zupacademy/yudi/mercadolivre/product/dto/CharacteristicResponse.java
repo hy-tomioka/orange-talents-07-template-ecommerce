@@ -1,30 +1,22 @@
 package br.com.zupacademy.yudi.mercadolivre.product.dto;
 
 import br.com.zupacademy.yudi.mercadolivre.product.Characteristic;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.util.Assert;
 
-public class NewCharacteristicResponse {
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+
+@JsonAutoDetect(fieldVisibility = ANY)
+public class CharacteristicResponse {
 
     private Long id;
     private String name;
     private String description;
 
-    public NewCharacteristicResponse(Characteristic characteristic) {
+    public CharacteristicResponse(Characteristic characteristic) {
         Assert.isTrue(characteristic != null, "Characteristic must not be null.");
         this.id = characteristic.getId();
         this.name = characteristic.getName();
         this.description = characteristic.getDescription();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
     }
 }

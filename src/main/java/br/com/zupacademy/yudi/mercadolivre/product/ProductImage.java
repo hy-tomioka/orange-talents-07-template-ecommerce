@@ -31,4 +31,12 @@ public class ProductImage {
         this.location = imageLocation;
         this.product = product;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getLocation() {
+        return location;
+    }
 }

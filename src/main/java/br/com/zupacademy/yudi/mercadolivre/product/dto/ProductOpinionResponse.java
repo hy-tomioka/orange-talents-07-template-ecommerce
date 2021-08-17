@@ -1,7 +1,11 @@
 package br.com.zupacademy.yudi.mercadolivre.product.dto;
 
 import br.com.zupacademy.yudi.mercadolivre.product.ProductOpinion;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+
+@JsonAutoDetect(fieldVisibility = ANY)
 public class ProductOpinionResponse {
 
     private Long id;
@@ -14,22 +18,5 @@ public class ProductOpinionResponse {
         this.rating = opinion.getRating();
         this.title = opinion.getTitle();
         this.review = opinion.getReview();
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public Integer getRating() {
-        return rating;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getReview() {
-        return review;
     }
 }

@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static javax.persistence.CascadeType.MERGE;
@@ -20,7 +21,8 @@ import static javax.persistence.CascadeType.PERSIST;
 @Table(name = "products")
 public class Product {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
@@ -43,11 +45,18 @@ public class Product {
     @JoinColumn(nullable = false)
     private Category category;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = PERSIST)
+    @OneToMany(mappedBy = "product", cascade = PERSIST)
     private Set<Characteristic> characteristics = new HashSet<>();
 
     @OneToMany(mappedBy = "product", cascade = MERGE)
     private Set<ProductImage> images = new HashSet<>();
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductOpinion> opinions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product")
+    @OrderBy("question ASC")
+    private Set<ProductQuestion> questions = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
@@ -70,6 +79,21 @@ public class Product {
         this.characteristics.addAll(characteristics.stream().map(c -> c.toCharacteristic(this))
                 .collect(Collectors.toSet()));
         this.seller = seller;
+    }
+
+    public void uploadAndBindImages(ImageUploader imageUploader, List<MultipartFile> images) {
+        Set<String> imagesLocation = imageUploader.upload(images);
+        bindImages(imagesLocation);
+    }
+
+    private void bindImages(Set<String> location) {
+        Assert.notEmpty(location, "Images are required.");
+        this.images.addAll(location.stream().map(image -> new ProductImage(image, this))
+                .collect(Collectors.toSet()));
+    }
+
+    public boolean belongsTo(User user) {
+        return (user.equals(this.seller));
     }
 
     public Long getId() {
@@ -104,25 +128,28 @@ public class Product {
         return seller.getUsername();
     }
 
-    public void uploadAndBindImages(ImageUploader imageUploader, List<MultipartFile> images) {
-        Set<String> imagesLocation = imageUploader.upload(images);
-        bindImages(imagesLocation);
+    public Set<ProductImage> getImages() {
+        return Collections.unmodifiableSet(images);
     }
 
-    private void bindImages(Set<String> location) {
-        Assert.notEmpty(location, "Images are required.");
-        this.images.addAll(location.stream().map(image -> new ProductImage(image, this))
-                .collect(Collectors.toSet()));
+    public Opinions getOpinions() {
+        return new Opinions(opinions);
     }
 
-    public boolean belongsTo(User user) {
-        return (user.equals(this.seller));
+    public Set<ProductQuestion> getQuestions() {
+        return Collections.unmodifiableSet(questions);
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "name='" + name + '\'' +
-                '}';
+    public <T> Collection<T> mapCharacteristics(
+            Function<Characteristic, T> mappingFunction) {
+        return this.characteristics.stream().map(mappingFunction).collect(Collectors.toSet());
+    }
+
+    public <T> Collection<T> mapImages(Function<ProductImage, T> mappingFunction) {
+        return this.images.stream().map(mappingFunction).collect(Collectors.toSet());
+    }
+
+    public <T extends Comparable<T>> SortedSet<T> mapQuestions(Function<ProductQuestion, T> mappingFunction) {
+        return this.questions.stream().map(mappingFunction).collect(Collectors.toCollection(TreeSet::new));
     }
 }

@@ -1,6 +1,7 @@
 package br.com.zupacademy.yudi.mercadolivre.product.dto;
 
 import br.com.zupacademy.yudi.mercadolivre.product.Product;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -8,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+
+@JsonAutoDetect(fieldVisibility = ANY)
 public class NewProductResponse {
 
     private Long id;
@@ -16,7 +20,7 @@ public class NewProductResponse {
     private BigDecimal price;
     private Long quantity;
     private String categoryName;
-    private List<NewCharacteristicResponse> characteristics = new ArrayList<>();
+    private List<CharacteristicResponse> characteristics = new ArrayList<>();
 
     public NewProductResponse(Product product) {
         Assert.isTrue(product != null, "Product must not be null.");
@@ -26,35 +30,7 @@ public class NewProductResponse {
         this.price = product.getPrice();
         this.quantity = product.getQuantity();
         this.categoryName = product.getCategoryName();
-        this.characteristics.addAll(product.getCharacteristics().stream().map(NewCharacteristicResponse::new)
+        this.characteristics.addAll(product.getCharacteristics().stream().map(CharacteristicResponse::new)
                 .collect(Collectors.toSet()));
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public Long getQuantity() {
-        return quantity;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public List<NewCharacteristicResponse> getCharacteristics() {
-        return characteristics;
     }
 }

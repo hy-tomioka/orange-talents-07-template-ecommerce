@@ -7,12 +7,15 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.Objects;
 
 @Entity
 @Table(name = "product_questions")
 public class ProductQuestion {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
@@ -40,19 +43,37 @@ public class ProductQuestion {
         this.product = product;
     }
 
-    @Override
-    public String toString() {
-        return "ProductQuestion{" +
-                "id=" + id +
-                ", question='" + question + '\'' +
-                ", registryDate=" + registryDate +
-                ", author=" + author +
-                ", product=" + product +
-                '}';
-    }
-
     public Email formatToEmail() {
         return new Email(question, product.getName(), author.getUsername(),
                 author.getUsername(), product.getSellerLogin());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public LocalDateTime getRegistryDate() {
+        return registryDate;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductQuestion that = (ProductQuestion) o;
+        return Objects.equals(question, that.question) && Objects.equals(author, that.author) && Objects.equals(product, that.product);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(question, author, product);
     }
 }
