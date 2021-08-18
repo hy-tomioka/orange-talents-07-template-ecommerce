@@ -1,5 +1,6 @@
 package br.com.zupacademy.yudi.mercadolivre.email;
 
+import br.com.zupacademy.yudi.mercadolivre.order.Order;
 import br.com.zupacademy.yudi.mercadolivre.product.ProductQuestion;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,12 @@ public class EmailService {
     }
 
     public void newQuestion(ProductQuestion question) {
-
         Email email = question.formatToEmail();
+        mailSender.send(email);
+    }
+
+    public void newOrder(Order order) {
+        Email email = order.formatToEmail();
         mailSender.send(email);
     }
 }

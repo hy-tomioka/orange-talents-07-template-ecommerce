@@ -28,7 +28,7 @@ public class NewProductResponse {
         this.name = product.getName();
         this.description = product.getDescription();
         this.price = product.getPrice();
-        this.quantity = product.getQuantity();
+        this.quantity = product.getStock();
         this.categoryName = product.getCategoryName();
         this.characteristics.addAll(product.getCharacteristics().stream().map(CharacteristicResponse::new)
                 .collect(Collectors.toSet()));

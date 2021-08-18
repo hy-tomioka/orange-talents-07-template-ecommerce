@@ -3,7 +3,6 @@ package br.com.zupacademy.yudi.mercadolivre.product;
 import br.com.zupacademy.yudi.mercadolivre.category.Category;
 import br.com.zupacademy.yudi.mercadolivre.product.dto.NewCharacteristicRequest;
 import br.com.zupacademy.yudi.mercadolivre.user.User;
-import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -16,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
+import static org.springframework.util.Assert.*;
 
 @Entity
 @Table(name = "products")
@@ -35,7 +35,7 @@ public class Product {
 
     @NotNull
     @Column(nullable = false)
-    private Long quantity;
+    private Long stock;
 
     @NotBlank
     @Column(nullable = false, length = 1000)
@@ -69,11 +69,11 @@ public class Product {
     private Product() {
     }
 
-    public Product(String name, BigDecimal price, Long quantity, String description, Category category,
+    public Product(String name, BigDecimal price, Long stock, String description, Category category,
                    Collection<NewCharacteristicRequest> characteristics, User seller) {
         this.name = name;
         this.price = price;
-        this.quantity = quantity;
+        this.stock = stock;
         this.description = description;
         this.category = category;
         this.characteristics.addAll(characteristics.stream().map(c -> c.toCharacteristic(this))
@@ -82,18 +82,46 @@ public class Product {
     }
 
     public void uploadAndBindImages(ImageUploader imageUploader, List<MultipartFile> images) {
+        notNull(imageUploader, "Image Uploader required.");
+        notEmpty(images, "Images are required.");
         Set<String> imagesLocation = imageUploader.upload(images);
         bindImages(imagesLocation);
     }
 
     private void bindImages(Set<String> location) {
-        Assert.notEmpty(location, "Images are required.");
+        notEmpty(location, "Images are required.");
         this.images.addAll(location.stream().map(image -> new ProductImage(image, this))
                 .collect(Collectors.toSet()));
     }
 
     public boolean belongsTo(User user) {
+        notNull(user, "User must not be null.");
         return (user.equals(this.seller));
+    }
+
+    public <T> Collection<T> mapCharacteristics(
+            Function<Characteristic, T> mappingFunction) {
+        return this.characteristics.stream().map(mappingFunction).collect(Collectors.toSet());
+    }
+
+    public <T> Collection<T> mapImages(Function<ProductImage, T> mappingFunction) {
+        return this.images.stream().map(mappingFunction).collect(Collectors.toSet());
+    }
+
+    public <T extends Comparable<T>> SortedSet<T> mapQuestions(Function<ProductQuestion, T> mappingFunction) {
+        return this.questions.stream().map(mappingFunction).collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    public boolean hasEnough(Long quantity) {
+        notNull(quantity, "Quantity must not be null.");
+        state(quantity > 0, "Quantity must be higher than zero.");
+        return this.stock >= quantity;
+    }
+
+    public void removeFromStock(Long quantity) {
+        notNull(quantity, "Quantity must not be null.");
+        state(quantity > 0, "Quantity must be higher than zero.");
+        this.stock -= quantity;
     }
 
     public Long getId() {
@@ -108,8 +136,8 @@ public class Product {
         return price;
     }
 
-    public Long getQuantity() {
-        return quantity;
+    public Long getStock() {
+        return stock;
     }
 
     public String getDescription() {
@@ -138,18 +166,5 @@ public class Product {
 
     public Set<ProductQuestion> getQuestions() {
         return Collections.unmodifiableSet(questions);
-    }
-
-    public <T> Collection<T> mapCharacteristics(
-            Function<Characteristic, T> mappingFunction) {
-        return this.characteristics.stream().map(mappingFunction).collect(Collectors.toSet());
-    }
-
-    public <T> Collection<T> mapImages(Function<ProductImage, T> mappingFunction) {
-        return this.images.stream().map(mappingFunction).collect(Collectors.toSet());
-    }
-
-    public <T extends Comparable<T>> SortedSet<T> mapQuestions(Function<ProductQuestion, T> mappingFunction) {
-        return this.questions.stream().map(mappingFunction).collect(Collectors.toCollection(TreeSet::new));
     }
 }
