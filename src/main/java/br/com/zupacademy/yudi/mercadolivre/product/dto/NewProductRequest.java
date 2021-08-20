@@ -25,7 +25,7 @@ public class NewProductRequest {
     @Size(max = 1000)
     private String description;
     @NotNull
-    @ExistsId(domainClass = Category.class)
+    @ExistsId(domainClass = Category.class, fieldName = "id")
     private Long categoryId;
     @Size(min = 3)
     @Valid

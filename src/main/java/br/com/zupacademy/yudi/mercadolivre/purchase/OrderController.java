@@ -1,7 +1,7 @@
-package br.com.zupacademy.yudi.mercadolivre.order;
+package br.com.zupacademy.yudi.mercadolivre.purchase;
 
 import br.com.zupacademy.yudi.mercadolivre.email.EmailService;
-import br.com.zupacademy.yudi.mercadolivre.order.dto.OrderRequest;
+import br.com.zupacademy.yudi.mercadolivre.purchase.dto.OrderRequest;
 import br.com.zupacademy.yudi.mercadolivre.product.Product;
 import br.com.zupacademy.yudi.mercadolivre.product.ProductRepository;
 import br.com.zupacademy.yudi.mercadolivre.user.User;
@@ -23,17 +23,17 @@ import java.net.URI;
 import static org.springframework.http.HttpStatus.FOUND;
 
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/api/orders")
 public class OrderController {
 
     private final ProductRepository productRepository;
     private final EmailService mailService;
-    private final EntityManager manager;
+    private final OrderRepository orderRepository;
 
-    public OrderController(ProductRepository productRepository, EmailService mailService, EntityManager manager) {
+    public OrderController(ProductRepository productRepository, EmailService mailService, EntityManager manager, OrderRepository orderRepository) {
         this.productRepository = productRepository;
         this.mailService = mailService;
-        this.manager = manager;
+        this.orderRepository = orderRepository;
     }
 
     @PostMapping
@@ -46,7 +46,7 @@ public class OrderController {
 
         verifyStock(request.getQuantity(), product);
         Order order = request.toOrder(product, user);
-        manager.persist(order);
+        orderRepository.save(order);
 
         mailService.newOrder(order);
 
@@ -62,7 +62,7 @@ public class OrderController {
     }
 
     private URI buildRedirectUri(UriComponentsBuilder uriComponentsBuilder, Order order) {
-        String redirectUrl = uriComponentsBuilder.path("/" + order.getGatewayName() + "/{id}")
+        String redirectUrl = uriComponentsBuilder.path("/api/orders/{id}/" + order.getGatewayName())
                 .buildAndExpand(order.getId()).toString();
         return order.generateGatewayUri(redirectUrl);
     }

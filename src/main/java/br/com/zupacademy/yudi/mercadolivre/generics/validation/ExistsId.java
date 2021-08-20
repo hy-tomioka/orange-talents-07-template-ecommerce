@@ -5,11 +5,16 @@ import javax.validation.Payload;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * Verifies if fieldName exists in domainClass.
+ * Ignores null fields.
+ */
+
 @Constraint(validatedBy = {ExistsIdValidator.class})
-@Target({FIELD})
+@Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 public @interface ExistsId {
 
@@ -20,5 +25,7 @@ public @interface ExistsId {
     Class<? extends Payload>[] payload() default { };
 
     Class<?> domainClass();
+
+    String fieldName();
 
 }

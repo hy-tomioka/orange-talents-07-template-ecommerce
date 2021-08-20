@@ -1,4 +1,4 @@
-package br.com.zupacademy.yudi.mercadolivre.order;
+package br.com.zupacademy.yudi.mercadolivre.purchase;
 
 import java.net.URI;
 import java.util.UUID;

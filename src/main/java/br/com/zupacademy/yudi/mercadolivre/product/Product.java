@@ -167,4 +167,8 @@ public class Product {
     public Set<ProductQuestion> getQuestions() {
         return Collections.unmodifiableSet(questions);
     }
+
+    public Long getSellerId() {
+        return seller.getId();
+    }
 }

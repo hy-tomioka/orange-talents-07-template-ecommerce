@@ -1,6 +1,6 @@
-package br.com.zupacademy.yudi.mercadolivre.order.dto;
+package br.com.zupacademy.yudi.mercadolivre.purchase.dto;
 
-import br.com.zupacademy.yudi.mercadolivre.order.Order;
+import br.com.zupacademy.yudi.mercadolivre.purchase.Order;
 import br.com.zupacademy.yudi.mercadolivre.product.Product;
 import br.com.zupacademy.yudi.mercadolivre.user.User;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;

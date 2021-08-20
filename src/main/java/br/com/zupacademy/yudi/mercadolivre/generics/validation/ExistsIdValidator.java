@@ -10,16 +10,18 @@ public class ExistsIdValidator implements ConstraintValidator<ExistsId, Object> 
     @PersistenceContext
     private EntityManager em;
     private Class<?> clazz;
+    private String fieldName;
 
     @Override
     public void initialize(ExistsId params) {
         clazz = params.domainClass();
+        fieldName = params.fieldName();
     }
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         if (value == null) return true;
-        Query query = em.createQuery("select 1 from " + clazz.getName() + " c where c.id = :pid");
+        Query query = em.createQuery("select 1 from " + clazz.getName() + " c where c." + fieldName + " = :pid");
         query.setParameter("pid", value);
         return !query.getResultList().isEmpty();
     }

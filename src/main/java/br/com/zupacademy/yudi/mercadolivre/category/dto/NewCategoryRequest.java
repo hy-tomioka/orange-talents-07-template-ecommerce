@@ -13,7 +13,7 @@ public class NewCategoryRequest {
     @UniqueValue(domainClass = Category.class, fieldName = "name")
     private String name;
 
-    @ExistsId(domainClass = Category.class)
+    @ExistsId(domainClass = Category.class, fieldName = "id")
     private Long superCategoryId;
 
     public Category toCategory(EntityManager em) {

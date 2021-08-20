@@ -48,6 +48,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(POST, "/api/user").permitAll()
                 .antMatchers(POST, "/api/auth").permitAll()
+                .antMatchers("/external-services/**").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
